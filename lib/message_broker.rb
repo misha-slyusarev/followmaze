@@ -1,7 +1,7 @@
 require 'socket'
 require 'uri'
 
-class Proxy
+class MessageBroker
   def run(events_port: 9090, clients_port: 9099)
     begin
       @socket = TCPServer.new(events_port)
@@ -48,8 +48,8 @@ class Proxy
         content_len = $1.to_i
       end
 
-      # Strip proxy headers
-      if line =~ /^proxy/i
+      # Strip message_broker headers
+      if line =~ /^message_broker/i
         next
       elsif line.strip.empty?
         to_server.write("Connection: close\r\n\r\n")
