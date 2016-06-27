@@ -6,12 +6,12 @@ require 'message_queue'
 class MessageBroker
   def initialize(event_port: 9090, client_port: 9099)
     @event_socket = TCPServer.new(event_port)
-    @event_socket.setsockopt(Socket::SOL_SOCKET, Socket::SO_REUSEADDR, 1)
 
     @client_socket = TCPServer.new(client_port)
     @client_socket.setsockopt(Socket::SOL_SOCKET, Socket::SO_REUSEADDR, 1)
 
     @descriptors = [@event_socket, @client_socket]
+    @dispatcher = nil
 
     puts 'MessageBroker started'
   end
@@ -22,11 +22,20 @@ class MessageBroker
         next unless active_sockets = select(@descriptors, nil, nil, nil)
 
         active_sockets.first.each do |sock|
+
           if sock == @event_socket
-            Thread.new { Dispatcher.new(sock).run }
+            @dispatcher = Dispatcher.new(sock)
+            Thread.new { @dispatcher.run }
           else
-            Thread.new { MessageQueue.new(sock).run }
+            mq = MessageQueue.new(sock)
+            if @dispatcher
+              @dispatcher.queues << mq
+              Thread.new { mq.run }
+            else
+              mq.drop('No event source found')
+            end
           end
+
         end
       end
 
@@ -40,5 +49,5 @@ class MessageBroker
       puts 'MessageBroker stopped'
     end
   end
-  
+
 end
