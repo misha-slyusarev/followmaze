@@ -11,6 +11,6 @@ ARGV.clear
 if args.empty?
   MessageBroker.new.run
 else
-  events_port = args.shift.strip
-  MessageBroker.new.run events_port
+  event_port = args.shift.strip
+  MessageBroker.new.run event_port
 end

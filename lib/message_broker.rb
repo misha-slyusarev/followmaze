@@ -2,12 +2,17 @@ require 'socket'
 require 'uri'
 
 class MessageBroker
-  def run(events_port: 9090, clients_port: 9099)
+  def run(event_port: 9090, client_port: 9099)
     begin
-      @socket = TCPServer.new(events_port)
+      @event_socket = TCPServer.new(event_port)
+      @client_socket = TCPServer.new(client_port)
+
       loop do
-        s = @socket.accept
-        Thread.new(s, &method(:handle_request))
+        es = @event_socket.accept
+        Thread.new(es, &method(:handle_event))
+
+        cs = @client_socket.accept
+        Thread.new(cs, &method(:handle_client))
       end
 
     # CTRL-C
@@ -23,7 +28,8 @@ class MessageBroker
     end
   end
 
-  def handle_request(publisher)
+  def handle_event(publisher)
+    puts 'Publisher connected'
     request_line = publisher.readline
     puts(request_line)
 
@@ -77,6 +83,11 @@ class MessageBroker
 =end
 
     publisher.close
+  end
+
+  def handle_client(client)
+    puts 'Client connected'
+    client.close
   end
 
 end
