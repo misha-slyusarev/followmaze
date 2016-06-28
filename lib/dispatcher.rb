@@ -1,7 +1,9 @@
+require 'router'
+
 class Dispatcher
   def initialize(event_socket)
     @socket = event_socket.accept
-    @message_queues = []
+    @router = Router.new
 
     puts 'Event source connected'
   end
@@ -12,7 +14,7 @@ class Dispatcher
     begin
       loop do
         line = @socket.gets
-        @message_queues.each { |mq| mq.push(line) } if @message_queues
+        @router.broadcast(line)
       end
 
     rescue Interrupt
@@ -27,7 +29,7 @@ class Dispatcher
     end
   end
 
-  def queues
-    @message_queues
+  def add_queue(mq)
+    @router.queues << mq
   end
 end

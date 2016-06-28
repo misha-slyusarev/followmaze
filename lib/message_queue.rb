@@ -1,7 +1,9 @@
 class MessageQueue
+  attr_reader :id
 
   def initialize(client_socket)
     @socket = client_socket.accept
+    @id = 1 # should read from socket instead
     @queue = Queue.new
 
     puts 'Client connected'
@@ -31,5 +33,9 @@ class MessageQueue
 
   def push(line)
     @queue.push(line)
+  end
+
+  def <=>(peer)
+    id <=> peer.id
   end
 end

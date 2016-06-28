@@ -29,7 +29,7 @@ class MessageBroker
           else
             mq = MessageQueue.new(sock)
             if @dispatcher
-              @dispatcher.queues << mq
+              @dispatcher.add_queue(mq)
               Thread.new { mq.run }
             else
               mq.drop('No event source found')
