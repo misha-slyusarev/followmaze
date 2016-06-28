@@ -1,22 +1,3 @@
-class Router
-  def initialize
-    @message_queues = SortedArray.new {|x,y| x.id <=> y.id }
-  end
-
-  def queues
-    @message_queues
-  end
-
-  def broadcast(line)
-    @message_queues.each { |mq| mq.push(line) }
-  end
-
-  def send_message(id, line)
-    mq = @message_queues.bsearch { |x| x.id == id }
-    mq.push(line)
-  end
-end
-
 class SortedArray < Array
   def initialize(*args, &sort_by)
     @sort_by = sort_by || Proc.new { |x,y| x <=> y }
@@ -47,7 +28,7 @@ class SortedArray < Array
     }
   end
 
-  #Do nothing; reversing the array would disorder it.
+  # Do nothing; reversing the array would disorder it.
   def reverse!
   end
 end
