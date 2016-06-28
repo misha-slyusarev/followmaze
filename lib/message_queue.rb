@@ -3,7 +3,7 @@ class MessageQueue
 
   def initialize(client_socket)
     @socket = client_socket.accept
-    @id = 1 # should read from socket instead
+    @id = @socket.gets.to_i
     @queue = Queue.new
 
     puts 'Client connected'
