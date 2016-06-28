@@ -1,6 +1,6 @@
 class Router
   def initialize
-    @message_queues = SortedArray.new
+    @message_queues = SortedArray.new {|x,y| x.id <=> y.id }
   end
 
   def queues
@@ -9,6 +9,11 @@ class Router
 
   def broadcast(line)
     @message_queues.each { |mq| mq.push(line) }
+  end
+
+  def send_message(id, line)
+    mq = @message_queues.bsearch { |x| x.id == id }
+    mq.push(line)
   end
 end
 

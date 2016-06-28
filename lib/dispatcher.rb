@@ -15,6 +15,7 @@ class Dispatcher
       loop do
         line = @socket.gets
         @router.broadcast(line)
+        @router.send_message(10, line)
       end
 
     rescue Interrupt

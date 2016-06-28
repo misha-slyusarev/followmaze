@@ -34,8 +34,4 @@ class MessageQueue
   def push(line)
     @queue.push(line)
   end
-
-  def <=>(peer)
-    id <=> peer.id
-  end
 end
