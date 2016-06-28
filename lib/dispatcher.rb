@@ -1,3 +1,4 @@
+require 'message'
 require 'router'
 
 class Dispatcher
@@ -9,17 +10,14 @@ class Dispatcher
   end
 
   def run
-    @socket.puts('HELLO')
-
     begin
       loop do
-        line = @socket.gets
-        @router.broadcast(line)
-        @router.send_message(10, line)
+        message = Message.new(@socket.gets)
+        @router.convey(message)
       end
 
     rescue Interrupt
-      puts 'Got interrupted..'
+      puts "\nGot interrupted.."
     rescue SocketError => se
       puts "Got socket error: #{se}"
     rescue StandardError => er
@@ -30,6 +28,8 @@ class Dispatcher
     end
   end
 
+  # TODO: remove message queue from the list when
+  #       when appropriate client drops off
   def add_queue(mq)
     @router.queues << mq
   end
