@@ -1,17 +1,19 @@
+require 'sorted_array'
+
 class MessageQueue
   attr_reader :id
 
   def initialize(client_socket)
-    @socket = client_socket.accept
-    @id = @socket.gets.to_i
+    @followers = SortedArray.new
     @queue = Queue.new
 
-    puts 'Client connected'
+    @socket = client_socket.accept
+    @id = @socket.gets.to_i
+
+    puts "Client #{@id} connected"
   end
 
   def run
-    @socket.puts('HELLO')
-
     begin
       loop do
         line = @queue.pop
@@ -33,5 +35,14 @@ class MessageQueue
 
   def push(line)
     @queue.push(line)
+  end
+
+  def add_follower(id)
+    @followers << id
+  end
+
+  def remove_follower(id)
+    index = @followers.bsearch { |x| x == id }
+    @followers.splice(index, 1)
   end
 end
