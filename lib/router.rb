@@ -1,6 +1,5 @@
 require 'message_queue'
 require 'message'
-require 'pry'
 
 class Router
   def initialize
@@ -13,20 +12,12 @@ class Router
 
   def convey(message)
     begin
-      #if message.sequence == 16918
-      #  puts message.raw
-      #  puts message.inspect
-      #  puts Message::Type::BROADCAST == message.type
-      #end
-
       case message.type
       when Message::Type::FOLLOW
-        puts 'F' if message.sequence == 16918
         mq = find_message_queue(message.to)
         mq.add_follower(message.from)
         mq.push(message.raw)
       when Message::Type::UNFOLLOW
-        puts 'U' if message.sequence == 16918
         mq = find_message_queue(message.to)
         mq.remove_follower(message.from)
         if ! mq.followers && mq.class == VirtualMessageQueue
@@ -35,10 +26,8 @@ class Router
       when Message::Type::BROADCAST
         @message_queues.each { |mq| mq.push(message.raw) }
       when Message::Type::PRIVATE
-        puts 'P' if message.sequence == 16918
         send_message(message.to, message.raw)
       when Message::Type::STATUS
-        puts 'S' if message.sequence == 16918
         mq = find_message_queue(message.from)
         mq.followers.each { |fid| send_message(fid, message.raw)}
       end

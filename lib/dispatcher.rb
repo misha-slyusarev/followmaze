@@ -13,7 +13,7 @@ class Dispatcher
     begin
       loop do
         raw_message = @socket.gets
-        if raw_message
+        unless raw_message.nil? || raw_message.empty?
           message = Message.new(raw_message)
           @router.convey(message)
         end
