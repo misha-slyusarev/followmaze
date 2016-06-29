@@ -19,6 +19,9 @@ class Router
       when 'U'
         mq = find_message_queue(message.to)
         mq.remove_follower(message.from)
+        if ! mq.followers && mq.class == VirtualMessageQueue
+          @message_queues.delete(mq.id)
+        end
       when 'B'
         @message_queues.each { |mq| mq.push(body) }
       when 'P'
