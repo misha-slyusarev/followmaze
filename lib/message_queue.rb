@@ -2,6 +2,7 @@ require 'sorted_array'
 
 class MessageQueue
   attr_reader :id
+  attr_reader :followers
 
   def initialize(client_socket)
     @followers = SortedArray.new
@@ -42,7 +43,7 @@ class MessageQueue
   end
 
   def remove_follower(id)
-    index = @followers.bsearch { |x| x == id }
-    @followers.splice(index, 1)
+    index = @followers.bsearch { |x| id - x }
+    @followers.delete(index)
   end
 end
