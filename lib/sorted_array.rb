@@ -1,3 +1,6 @@
+
+# TODO: reimplement insert and delete with bsearch
+
 class SortedArray < Array
   def initialize(*args, &sort_by)
     @sort_by = sort_by || Proc.new { |x, y| x <=> y }
@@ -6,8 +9,6 @@ class SortedArray < Array
   end
 
   def insert(i, v)
-    # The next line could be further optimized to perform a
-    # binary search.
     insert_before = index(find { |x| @sort_by.call(x, v) == 1 })
     super(insert_before ? insert_before : -1, v)
   end

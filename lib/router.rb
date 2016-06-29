@@ -1,4 +1,4 @@
-require 'sorted_array'
+require 'message_queue'
 
 class Router
   def initialize
@@ -10,8 +10,6 @@ class Router
   end
 
   def convey(message)
-    puts " -> #{message.type} from #{message.from} to #{message.to}"
-
     begin
       case message.type
       when 'F'
@@ -30,13 +28,18 @@ class Router
         mq.followers.each { |fid| send_message(fid, message.raw)}
       end
     rescue NoQueueFound
+      if 'F' == message.type
+        vmq = VirtualMessageQueue.new(message.to)
+        vmq.add_follower(message.from)
+        @message_queues << vmq
+      end
     end
   end
 
 private
 
   def send_message(id, body)
-    message_queue = @message_queues.bsearch { |mq| id - mq.id } or raise NoQueueFound
+    message_queue = find_message_queue(id)
     message_queue.push(body)
   end
 

@@ -1,15 +1,41 @@
 require 'sorted_array'
 
-class MessageQueue
+module MessageQueueCommon
   attr_reader :id
   attr_reader :followers
 
-  def initialize(client_socket)
-    @followers = SortedArray.new
-    @queue = Queue.new
+  def add_follower(id)
+    @followers << id
+  end
 
+  def remove_follower(id)
+    index = @followers.bsearch { |x| id - x }
+    @followers.delete(index)
+  end
+end
+
+class VirtualMessageQueue
+  include MessageQueueCommon
+
+  def initialize(id)
+    @id = id
+    @followers = SortedArray.new
+  end
+
+  # In virtual queue we don't send
+  # the message anywhere
+  def push(line)
+  end
+end
+
+class MessageQueue
+  include MessageQueueCommon
+
+  def initialize(client_socket)
+    @queue = Queue.new
     @socket = client_socket.accept
     @id = @socket.gets.to_i
+    @followers = SortedArray.new
 
     puts "Client #{@id} connected"
   end
@@ -18,6 +44,7 @@ class MessageQueue
     begin
       loop do
         line = @queue.pop
+        puts line if @id == 792
         @socket.puts(line)
       end
 
@@ -36,14 +63,5 @@ class MessageQueue
 
   def push(line)
     @queue.push(line)
-  end
-
-  def add_follower(id)
-    @followers << id
-  end
-
-  def remove_follower(id)
-    index = @followers.bsearch { |x| id - x }
-    @followers.delete(index)
   end
 end
