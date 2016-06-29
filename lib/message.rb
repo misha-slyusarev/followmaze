@@ -2,6 +2,8 @@ class Message
   attr_reader :type, :from, :to, :raw
 
   def initialize(raw)
+    puts " -> #{raw}"
+    
     @raw = raw
     @type, from, to = raw.split('|')[1, 3]
     @from = from.to_i

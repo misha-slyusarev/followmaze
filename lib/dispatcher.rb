@@ -12,8 +12,11 @@ class Dispatcher
   def run
     begin
       loop do
-        message = Message.new(@socket.gets)
-        @router.convey(message)
+        raw_message = @socket.gets
+        if raw_message
+          message = Message.new(raw_message)
+          @router.convey(message)
+        end
       end
 
     rescue Interrupt
