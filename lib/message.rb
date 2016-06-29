@@ -17,7 +17,7 @@ class Message
     @to = to.to_i
     @raw = raw
 
-    @type = case type
+    @type = case type.tr('\r\n')
             when 'F' then Type::FOLLOW
             when 'U' then Type::UNFOLLOW
             when 'B' then Type::BROADCAST

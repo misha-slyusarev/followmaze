@@ -13,11 +13,11 @@ class Router
 
   def convey(message)
     begin
-      if message.sequence == 16918
-        puts message.raw
-        puts message.inspect
-        puts Message::Type::BROADCAST == message.type
-      end
+      #if message.sequence == 16918
+      #  puts message.raw
+      #  puts message.inspect
+      #  puts Message::Type::BROADCAST == message.type
+      #end
 
       case message.type
       when Message::Type::FOLLOW
