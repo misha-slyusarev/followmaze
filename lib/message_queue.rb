@@ -22,9 +22,9 @@ class VirtualMessageQueue
     @followers = SortedArray.new
   end
 
-  # In virtual queue we don't send
-  # the message anywhere
-  def push(line)
+  # Empty methods for compatibility with MessageQueue
+  ["push", "drop"].each do |method_name|
+    module_eval %{ def #{method_name}(*args); end }
   end
 end
 
@@ -44,20 +44,15 @@ class MessageQueue
     begin
       loop do
         line = @queue.pop
-        puts line if @id == 792
         @socket.puts(line)
       end
-
-    rescue Interrupt
-      puts 'Got interrupted..'
     ensure
       @socket.close
-      puts 'MessageQueue stopped'
+      puts "MessageQueue #{@id} stopped"
     end
   end
 
-  def drop(message)
-    @socket.puts(message)
+  def drop()
     @socket.close
   end
 

@@ -22,7 +22,6 @@ class MessageBroker
         next unless active_sockets = select(@descriptors, nil, nil, nil)
 
         active_sockets.first.each do |sock|
-
           if sock == @event_socket
             @dispatcher = Dispatcher.new(sock)
             Thread.new { @dispatcher.run }
@@ -32,19 +31,16 @@ class MessageBroker
               @dispatcher.add_queue(mq)
               Thread.new { mq.run }
             else
-              mq.drop('No event source found')
+              mq.drop
             end
           end
-
         end
       end
 
     rescue Interrupt
       puts 'Got interrupted..'
     ensure
-      @descriptors.each do |sock|
-        sock.close if sock
-      end
+      @descriptors.each { |sock| sock.close if sock }
 
       puts 'MessageBroker stopped'
     end
