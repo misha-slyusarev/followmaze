@@ -1,6 +1,6 @@
 class SortedArray < Array
   def initialize(*args, &sort_by)
-    @sort_by = sort_by || Proc.new { |x,y| x <=> y }
+    @sort_by = sort_by || Proc.new { |x, y| x <=> y }
     super(*args)
     sort!(&sort_by)
   end
@@ -19,7 +19,7 @@ class SortedArray < Array
   alias push <<
   alias unshift <<
 
-  ["collect!", "flatten!", "[]="].each do |method_name|
+  ["collect!", "flatten!", "[]=", "delete"].each do |method_name|
     module_eval %{
       def #{method_name}(*args)
         super
