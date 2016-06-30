@@ -33,6 +33,10 @@ class Dispatcher
     end
   end
 
+  def add_queue(mq)
+    @exchange.message_queues << mq
+  end
+
 private
 
   def each_new_line(&block)
@@ -51,7 +55,4 @@ private
     puts 'Dispatcher stopped'
   end
 
-  def add_queue(mq)
-    @exchange.message_queues << mq
-  end
 end
