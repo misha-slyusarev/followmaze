@@ -2,12 +2,10 @@ require 'message_queue'
 require 'message'
 
 class Exchange
+  attr_reader :message_queues
+
   def initialize
     @message_queues = SortedArray.new { |x, y| x.id <=> y.id }
-  end
-
-  def queues
-    @message_queues
   end
 
   def convey(message)

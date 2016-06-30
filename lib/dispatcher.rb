@@ -46,9 +46,7 @@ class Dispatcher
     puts 'Dispatcher stopped'
   end
 
-  # TODO: remove message queue from the list
-  #       when appropriate client drops off
   def add_queue(mq)
-    @exchange.queues << mq
+    @exchange.message_queues << mq
   end
 end
