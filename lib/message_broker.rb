@@ -40,8 +40,7 @@ class MessageBroker
     rescue Interrupt
       puts 'Got interrupted..'
     ensure
-      @descriptors.each { |sock| sock.close if sock }
-
+      @descriptors.each { |sock| sock.close }
       puts 'MessageBroker stopped'
     end
   end

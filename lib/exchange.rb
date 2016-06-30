@@ -1,7 +1,7 @@
 require 'message_queue'
 require 'message'
 
-class Router
+class Exchange
   def initialize
     @message_queues = SortedArray.new { |x, y| x.id <=> y.id }
   end
