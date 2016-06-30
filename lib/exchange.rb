@@ -41,8 +41,8 @@ class Exchange
 private
 
   def send_message(id, body)
-    message_queue = @message_queues.bsearch { |mq| id - mq.id }
-    message_queue.push(body) unless message_queue.nil?
+    mq = @message_queues.bsearch { |mq| id - mq.id }
+    mq.push(body) unless mq.nil?
   end
 
   def find_message_queue(id)
