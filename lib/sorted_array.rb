@@ -1,6 +1,3 @@
-
-# TODO: reimplement insert and delete with bsearch
-
 class SortedArray < Array
   def initialize(*args, &sort_by)
     @sort_by = sort_by || Proc.new { |x, y| x <=> y }
@@ -9,7 +6,7 @@ class SortedArray < Array
   end
 
   def insert(i, v)
-    insert_before = index(find { |x| @sort_by.call(x, v) == 1 })
+    insert_before = bsearch_index { |x| @sort_by.call(x, v) == 1 }
     super(insert_before ? insert_before : -1, v)
   end
 
@@ -18,7 +15,6 @@ class SortedArray < Array
   end
 
   alias push <<
-  alias unshift <<
 
   ["delete_at", "delete"].each do |method_name|
     module_eval %{
@@ -27,9 +23,6 @@ class SortedArray < Array
         sort!(&@sort_by)
       end
     }
-  end
-
-  def reverse!
   end
 
   def delete_first
