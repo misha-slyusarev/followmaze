@@ -20,7 +20,7 @@ class SortedArray < Array
   alias push <<
   alias unshift <<
 
-  ["collect!", "flatten!", "[]=", "delete"].each do |method_name|
+  ["delete_at", "delete"].each do |method_name|
     module_eval %{
       def #{method_name}(*args)
         super
@@ -29,7 +29,11 @@ class SortedArray < Array
     }
   end
 
-  # Do nothing; reversing the array would disorder it.
   def reverse!
   end
+
+  def delete_first
+    delete_at(0)
+  end
+
 end

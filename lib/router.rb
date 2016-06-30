@@ -43,8 +43,8 @@ class Router
 private
 
   def send_message(id, body)
-    message_queue = find_message_queue(id)
-    message_queue.push(body)
+    message_queue = @message_queues.bsearch { |mq| id - mq.id }
+    message_queue.push(body) unless message_queue.nil?
   end
 
   def find_message_queue(id)

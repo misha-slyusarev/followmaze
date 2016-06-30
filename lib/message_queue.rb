@@ -36,8 +36,6 @@ class MessageQueue
     @socket = client_socket.accept
     @id = @socket.gets.to_i
     @followers = SortedArray.new
-
-    puts "Client #{@id} connected"
   end
 
   def run
@@ -48,7 +46,6 @@ class MessageQueue
       end
     ensure
       @socket.close
-      puts "MessageQueue #{@id} stopped"
     end
   end
 
