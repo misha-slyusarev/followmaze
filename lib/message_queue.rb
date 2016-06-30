@@ -2,16 +2,7 @@ require 'sorted_array'
 
 module MessageQueueCommon
   attr_reader :id
-  attr_reader :followers
-
-  def add_follower(id)
-    @followers << id
-  end
-
-  def remove_follower(id)
-    index = @followers.bsearch { |x| id - x }
-    @followers.delete(index)
-  end
+  attr_accessor :followers
 end
 
 class VirtualMessageQueue

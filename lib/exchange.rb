@@ -13,13 +13,13 @@ class Exchange
       case message.type
       when Message::Type::FOLLOW
         mq = find_message_queue(message.to)
-        mq.add_follower(message.from)
+        mq.followers << message.from
         mq.push(message.raw)
       when Message::Type::UNFOLLOW
         mq = find_message_queue(message.to)
-        mq.remove_follower(message.from)
+        mq.followers.delete(message.from)
         if ! mq.followers && mq.class == VirtualMessageQueue
-          @message_queues.delete(mq.id)
+          @message_queues.delete(mq)
         end
       when Message::Type::BROADCAST
         @message_queues.each { |mq| mq.push(message.raw) }
@@ -32,7 +32,7 @@ class Exchange
     rescue NoQueueFound
       if Message::Type::FOLLOW == message.type
         vmq = VirtualMessageQueue.new(message.to)
-        vmq.add_follower(message.from)
+        vmq.followers << message.from
         @message_queues << vmq
       end
     end
