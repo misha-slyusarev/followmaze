@@ -13,28 +13,33 @@ class Dispatcher
   end
 
   def run
-    loop do
-      raw_message = @socket.gets
-      unless raw_message.nil? || raw_message.empty?
-        message = Message.new(raw_message)
-        if message.sequence - 1 == @last_sequence
-          @exchange.convey(message)
-          @last_sequence = message.sequence
+    each_new_line do |raw|
+      message = Message.new(raw)
+      if message.sequence - 1 == @last_sequence
+        @exchange.convey(message)
+        @last_sequence = message.sequence
 
-          while @messages_to_handle.any?
-            next_sequence = @messages_to_handle.first.sequence
-            break unless next_sequence - 1 == @last_sequence
+        while @messages_to_handle.any?
+          next_sequence = @messages_to_handle.first.sequence
+          break unless next_sequence - 1 == @last_sequence
 
-            @exchange.convey(@messages_to_handle.first)
-            @messages_to_handle.delete_first
-            @last_sequence = next_sequence
-          end
-        else
-          @messages_to_handle << message
+          @exchange.convey(@messages_to_handle.first)
+          @messages_to_handle.delete_first
+          @last_sequence = next_sequence
         end
+      else
+        @messages_to_handle << message
       end
     end
+  end
 
+private
+
+  def each_new_line(&block)
+    loop do
+      line = @socket.gets
+      yield line unless line.nil? || line.empty?
+    end
   rescue Interrupt
     puts "\nGot interrupted.."
   rescue SocketError => se
