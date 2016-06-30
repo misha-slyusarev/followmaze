@@ -1,5 +1,4 @@
 require 'socket'
-require 'uri'
 require 'dispatcher'
 require 'message_queue'
 
@@ -17,32 +16,30 @@ class MessageBroker
   end
 
   def run
-    begin
-      loop do
-        next unless active_sockets = select(@descriptors, nil, nil, nil)
-
-        active_sockets.first.each do |sock|
-          if sock == @event_socket
-            @dispatcher = Dispatcher.new(sock)
-            Thread.new { @dispatcher.run }
-          else
-            mq = MessageQueue.new(sock)
-            if @dispatcher
-              @dispatcher.add_queue(mq)
-              Thread.new { mq.run }
-            else
-              mq.drop
-            end
-          end
-        end
+    each_new_connection do |socket|
+      if socket == @event_socket && @dispatcher.nil?
+        @dispatcher = Dispatcher.new(socket)
+        Thread.new { @dispatcher.run }
+      else
+        mq = MessageQueue.new(socket)
+        mq.drop if @dispatcher.nil?
+        @dispatcher.add_queue(mq)
+        Thread.new { mq.run }
       end
-
-    rescue Interrupt
-      puts 'Got interrupted..'
-    ensure
-      @descriptors.each { |sock| sock.close }
-      puts 'MessageBroker stopped'
     end
   end
 
+private
+
+  def each_new_connection(&block)
+    loop do
+      next unless active_sockets = select(@descriptors, nil, nil, nil)
+      active_sockets.first.each { |socket| yield socket }
+    end
+  rescue Interrupt
+    puts 'Got interrupted..'
+  ensure
+    @descriptors.each { |sock| sock.close }
+    puts 'MessageBroker stopped'
+  end
 end
