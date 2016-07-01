@@ -20,7 +20,7 @@ module MessageBroker
       each_socket_activity do |socket|
         if socket == @event_socket
           line = @event_socket.gets
-          work_on(Message.new(line))
+          handle(Message.new(line))
         else
           mq = MessageQueue.new(socket)
           @exchange.message_queues << mq
@@ -31,7 +31,7 @@ module MessageBroker
 
     private
 
-    def work_on(message)
+    def handle(message)
       if message.sequence - 1 == @last_sequence
         @exchange.convey(message)
         @last_sequence = message.sequence
