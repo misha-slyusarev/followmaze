@@ -6,3 +6,11 @@ require 'message_broker/message'
 require 'message_broker/base'
 
 require 'socket'
+
+module MessageBroker
+
+  def MessageBroker.start event_port: 9090, client_port: 9099
+    dispatcher = Dispatcher.new event_port, client_port
+    dispatcher.run
+  end
+end

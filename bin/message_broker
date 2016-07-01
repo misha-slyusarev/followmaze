@@ -9,8 +9,8 @@ args = ARGV.dup
 ARGV.clear
 
 if args.empty?
-  MessageBroker::Base.new.run
+  MessageBroker.start
 else
   event_port = args.shift.strip
-  MessageBroker::Base.new.run event_port
+  MessageBroker.start event_port
 end
