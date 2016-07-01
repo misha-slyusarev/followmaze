@@ -1,6 +1,10 @@
 # encoding: utf-8
 # frozen_string_literal: true
+
 module MessageBroker
+  # SortedArray extends functionality of general purpose
+  # array and keeps its content sorted. Only required
+  # methods implemented.
   class SortedArray < Array
     def initialize(*args, &sort_by)
       @sort_by = sort_by || proc { |x, y| x <=> y }
@@ -16,8 +20,6 @@ module MessageBroker
     def <<(v)
       insert(0, v)
     end
-
-    alias push <<
 
     def delete_first
       delete_at(0)
