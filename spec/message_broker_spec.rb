@@ -7,7 +7,14 @@ describe MessageBroker do
     expect(MessageBroker::VERSION).not_to be nil
   end
 
-  it 'does something useful' do
-    expect(false).to eq(true)
+  describe '#start' do
+    let(:dispatcher) { double(MessageBroker::Dispatcher) }
+
+    it 'creates new Dispatcher' do
+      expect(MessageBroker::Dispatcher).to receive(:new).and_return(dispatcher)
+      expect(dispatcher).to receive(:run)
+
+      MessageBroker.start
+    end
   end
 end
