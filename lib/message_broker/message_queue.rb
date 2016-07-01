@@ -12,9 +12,7 @@ module MessageBroker
       @followers = SortedArray.new
     end
 
-    # Empty methods for compatibility with MessageQueue
-    ["push", "drop"].each do |method_name|
-      module_eval %{ def #{method_name}(*args); end }
+    def push(line)
     end
   end
 
@@ -37,10 +35,6 @@ module MessageBroker
       ensure
         @socket.close
       end
-    end
-
-    def drop()
-      @socket.close
     end
 
     def push(line)
