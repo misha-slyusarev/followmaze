@@ -1,3 +1,5 @@
+# encoding: utf-8
+# frozen_string_literal: true
 module MessageBroker
   class Message
     attr_reader :sequence, :type, :from, :to, :raw
@@ -14,11 +16,11 @@ module MessageBroker
       sequence, type, from, to = raw.split('|')
 
       @type = case type.strip
-        when 'F' then Type::FOLLOW
-        when 'U' then Type::UNFOLLOW
-        when 'B' then Type::BROADCAST
-        when 'P' then Type::PRIVATE
-        when 'S' then Type::STATUS
+              when 'F' then Type::FOLLOW
+              when 'U' then Type::UNFOLLOW
+              when 'B' then Type::BROADCAST
+              when 'P' then Type::PRIVATE
+              when 'S' then Type::STATUS
       end
 
       @sequence = sequence.to_i

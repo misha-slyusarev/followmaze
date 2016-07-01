@@ -1,3 +1,5 @@
+# encoding: utf-8
+# frozen_string_literal: true
 module MessageBroker
   class Dispatcher
     def initialize(event_port, client_port)
@@ -43,21 +45,21 @@ module MessageBroker
       end
     end
 
-  private
+    private
 
-    def each_socket_activity(&block)
+    def each_socket_activity
       loop do
         next unless active_sockets = select(@descriptors, nil, nil, nil)
         active_sockets.first.each { |socket| yield socket }
       end
     rescue Interrupt
-      puts "Done"
+      puts 'Done'
     rescue SocketError => se
       puts "Got socket error: #{se}"
     rescue StandardError => er
       puts "Error: #{er}"
     ensure
-      @descriptors.each { |sock| sock.close }
+      @descriptors.each(&:close)
     end
   end
 end

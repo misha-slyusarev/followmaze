@@ -1,3 +1,5 @@
+# encoding: utf-8
+# frozen_string_literal: true
 module MessageBroker
   module MessageQueueCommon
     attr_reader :id
@@ -27,14 +29,12 @@ module MessageBroker
     end
 
     def run
-      begin
-        loop do
-          line = @queue.pop
-          @socket.puts(line)
-        end
-      ensure
-        @socket.close
+      loop do
+        line = @queue.pop
+        @socket.puts(line)
       end
+    ensure
+      @socket.close
     end
 
     def push(line)

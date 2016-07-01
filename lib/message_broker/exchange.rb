@@ -1,3 +1,5 @@
+# encoding: utf-8
+# frozen_string_literal: true
 module MessageBroker
   class Exchange
     attr_reader :message_queues
@@ -18,7 +20,7 @@ module MessageBroker
       when Message::Type::UNFOLLOW
         mq = find_message_queue(message.to)
         mq.followers.delete(message.from)
-        if ! mq.followers && mq.class == VirtualMessageQueue
+        if !mq.followers && mq.class == VirtualMessageQueue
           @message_queues.delete(mq)
         end
 
@@ -30,7 +32,7 @@ module MessageBroker
 
       when Message::Type::STATUS
         mq = find_message_queue(message.from)
-        mq.followers.each { |id| send_message(id, message.raw)}
+        mq.followers.each { |id| send_message(id, message.raw) }
       end
 
     rescue NoQueueFound
@@ -50,7 +52,7 @@ module MessageBroker
       end
     end
 
-  private
+    private
 
     def send_message(id, body)
       mq = find_message_queue(id)
@@ -59,7 +61,7 @@ module MessageBroker
 
     def find_message_queue(id)
       mq = @message_queues.bsearch { |mq| id - mq.id }
-      mq or raise NoQueueFound
+      mq || raise(NoQueueFound)
     end
   end
 
