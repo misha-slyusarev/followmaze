@@ -51,7 +51,7 @@ module MessageBroker
         active_sockets.first.each { |socket| yield socket }
       end
     rescue Interrupt
-      puts "Stop MessageBroker"
+      puts "Done"
     rescue SocketError => se
       puts "Got socket error: #{se}"
     rescue StandardError => er

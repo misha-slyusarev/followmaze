@@ -17,15 +17,6 @@ module MessageBroker
 
     alias push <<
 
-    ["delete_at", "delete"].each do |method_name|
-      module_eval %{
-        def #{method_name}(*args)
-          super
-          sort!(&@sort_by)
-        end
-      }
-    end
-
     def delete_first
       delete_at(0)
     end
