@@ -1,6 +1,8 @@
 # encoding: utf-8
 # frozen_string_literal: true
 module MessageBroker
+  # Message parses raw line recieved from event sourse
+  # and caries this information for futher processing
   class Message
     attr_reader :sequence, :type, :from, :to, :raw
 
