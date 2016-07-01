@@ -30,12 +30,12 @@ module MessageBroker
       # a virtual queue for him to subscribe.
       # If there is no such a client, and 'to' exists, then just
       # send raw 'Follow' message out to the client with 'to' id
-      if @message_queues.bsearch { |mq| @current_message.from - mq.id }
+      if look_through_queues(@current_message.from)
         vmq = VirtualMessageQueue.new(message.to)
         vmq.followers << @current_message.from
         @message_queues << vmq
       else
-        to_mq = @message_queues.bsearch { |mq| @current_message.to - mq.id }
+        to_mq = look_through_queues(@current_message.to)
         to_mq.push(message.raw) unless to_mq.nil?
       end
     end
@@ -76,8 +76,12 @@ module MessageBroker
     end
 
     def find_message_queue(id)
-      mq = @message_queues.bsearch { |q| id - q.id }
+      mq = look_through_queues(id)
       mq || raise(NoQueueFound)
+    end
+
+    def look_through_queues(id)
+      @message_queues.bsearch { |q| id - q.id }
     end
   end
 
