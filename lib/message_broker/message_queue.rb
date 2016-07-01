@@ -16,7 +16,7 @@ module MessageBroker
 
     def initialize(client_socket)
       @queue = Queue.new
-      @socket = client_socket.accept
+      @socket = client_socket.accept.set_encoding('UTF-8')
       @id = @socket.gets.to_i
       @followers = SortedArray.new
     end

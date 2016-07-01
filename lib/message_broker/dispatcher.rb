@@ -7,9 +7,8 @@ module MessageBroker
   # pass them to Exchange (in correct sequence) for futher processing
   class Dispatcher
     def initialize(event_port, client_port)
-      @event_socket = TCPServer.new(event_port).accept
+      @event_socket = TCPServer.new(event_port).accept.set_encoding('UTF-8')
       @client_socket = TCPServer.new(client_port)
-      @client_socket.setsockopt(Socket::SOL_SOCKET, Socket::SO_REUSEADDR, 1)
       @descriptors = [@event_socket, @client_socket]
 
       @messages_to_handle = SortedArray.new { |x, y| x.sequence <=> y.sequence }
