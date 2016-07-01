@@ -35,7 +35,6 @@ module MessageBroker
       if message.sequence - 1 == @last_sequence
         @exchange.convey(message)
         @last_sequence = message.sequence
-
         handle_other_messages
       else
         @messages_to_handle << message
