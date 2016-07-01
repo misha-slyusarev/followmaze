@@ -1,23 +1,16 @@
 # encoding: utf-8
 # frozen_string_literal: true
+
 module MessageBroker
+  # Common functionality for both MessageQueue
+  # and VirtualMessageQueue classes
   module MessageQueueCommon
     attr_reader :id
     attr_accessor :followers
   end
 
-  class VirtualMessageQueue
-    include MessageQueueCommon
-
-    def initialize(id)
-      @id = id
-      @followers = SortedArray.new
-    end
-
-    def push(line)
-    end
-  end
-
+  # Waits for a message from Exchange to
+  # pass it over to a client socket
   class MessageQueue
     include MessageQueueCommon
 
@@ -39,6 +32,19 @@ module MessageBroker
 
     def push(line)
       @queue.push(line)
+    end
+  end
+
+  # Handles followers of unexisted clients
+  class VirtualMessageQueue
+    include MessageQueueCommon
+
+    def initialize(id)
+      @id = id
+      @followers = SortedArray.new
+    end
+
+    def push(line)
     end
   end
 end
