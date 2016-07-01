@@ -76,7 +76,7 @@ module MessageBroker
     end
 
     def find_message_queue(id)
-      mq = @message_queues.bsearch { |mq| id - mq.id }
+      mq = @message_queues.bsearch { |q| id - q.id }
       mq || raise(NoQueueFound)
     end
   end
