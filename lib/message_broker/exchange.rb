@@ -25,9 +25,9 @@ module MessageBroker
 
     rescue NoQueueFound
       return unless Message::Type::FOLLOW == message.type
-      # Sometimes there is no client to follow to. In this case
-      # if a subscriber with 'from' id exists, we want to create
-      # a virtual queue for him to subscribe.
+      # Sometimes there is no client to follow. In this case if
+      # a subscriber with 'from' id exists, we want to create a
+      # virtual queue for him to subscribe.
       # If there is no such a client, and 'to' exists, then just
       # send raw 'Follow' message out to the client with 'to' id
       if look_through_queues(@current_message.from)
