@@ -12,17 +12,19 @@ module MessageBroker
       sort!(&sort_by)
     end
 
-    def insert(_i, v)
-      insert_before = bsearch_index { |x| @sort_by.call(x, v) == 1 }
-      super(insert_before ? insert_before : -1, v)
-    end
-
     def <<(v)
       insert(0, v)
     end
 
     def delete_first
       delete_at(0)
+    end
+
+    private
+
+    def insert(_i, v)
+      insert_before = bsearch_index { |x| @sort_by.call(x, v) >= 0 }
+      super(insert_before ? insert_before : -1, v)
     end
   end
 end
