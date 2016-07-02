@@ -57,7 +57,7 @@ describe MessageBroker::VirtualMessageQueue do
   let(:id) { double('int') }
   let(:followers) { MessageBroker::SortedArray.new }
 
-  subject(:virtual_message_queue) { MessageBroker::VirtualMessageQueue.new(id) }
+  subject { MessageBroker::VirtualMessageQueue.new(id) }
 
   it { is_expected.to have_attributes(id: id, followers: followers)}
 end
