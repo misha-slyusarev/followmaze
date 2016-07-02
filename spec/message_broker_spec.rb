@@ -8,7 +8,7 @@ describe MessageBroker do
   end
 
   describe '#start' do
-    let(:dispatcher) { double(MessageBroker::Dispatcher) }
+    let(:dispatcher) { instance_double(MessageBroker::Dispatcher) }
 
     it 'creates new Dispatcher' do
       expect(MessageBroker::Dispatcher).to receive(:new).and_return(dispatcher)
