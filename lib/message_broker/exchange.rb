@@ -6,7 +6,7 @@ module MessageBroker
   # situation when there is no client to follow to. It then
   # creates virtual queues that are able to manage real followers
   class Exchange
-    attr_reader :message_queues
+    attr_accessor :message_queues
 
     def initialize
       @message_queues = SortedArray.new { |x, y| x.id <=> y.id }
