@@ -61,13 +61,21 @@ describe MessageBroker::Exchange do
       end
     end
 
-    # context 'getting Broadcast message' do
-    #   before { exchange.convey(broadcast_message) }
-    #   it 'delivers it properly' do
-    #     exchange.convey(broadcast_message)
-    #   end
-    # end
-    #
+    context 'getting Broadcast message' do
+      let(:broadcast_message) { instance_double('MessageBroker::Message', 'Unfollow message') }
+
+      before do
+        allow(broadcast_message).to receive(:type).and_return(MessageBroker::Message::Type::BROADCAST)
+        allow(broadcast_message).to receive(:raw).and_return(broadcast_raw_message)
+        allow(message_queue).to receive(:push).with(broadcast_raw_message)
+      end
+
+      it 'delivers it properly' do
+        expect(message_queue).to receive(:push).with(broadcast_raw_message)
+        exchange.convey(broadcast_message)
+      end
+    end
+
     # context 'getting Private message' do
     #   before { exchange.convey(private_message) }
     #   it 'delivers it properly' do
