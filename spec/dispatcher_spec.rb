@@ -37,8 +37,18 @@ describe MessageBroker::Dispatcher do
     end
 
     context 'with incoming client connection' do
+      let(:new_message_queue) { instance_double(MessageBroker::MessageQueue, 'New message queue')}
+      
+      before do
+        allow(dispatcher).to receive(:each_socket_activity).and_yield(client_socket)
+        allow(Thread).to receive(:new).and_yield
+        allow(MessageBroker::MessageQueue).to receive(:new).with(client_socket).and_return(new_message_queue)
+        allow(new_message_queue).to receive(:run)
+      end
+
       it 'handles new connection' do
-        skip
+        expect(new_message_queue).to receive(:run)
+        dispatcher.run
       end
     end
   end
