@@ -38,16 +38,47 @@ describe MessageBroker::Dispatcher do
 
     context 'with incoming client connection' do
       let(:new_message_queue) { instance_double(MessageBroker::MessageQueue, 'New message queue')}
-      
+
       before do
         allow(dispatcher).to receive(:each_socket_activity).and_yield(client_socket)
-        allow(Thread).to receive(:new).and_yield
         allow(MessageBroker::MessageQueue).to receive(:new).with(client_socket).and_return(new_message_queue)
         allow(new_message_queue).to receive(:run)
+        allow(Thread).to receive(:new).and_yield
       end
 
       it 'handles new connection' do
         expect(new_message_queue).to receive(:run)
+        dispatcher.run
+      end
+    end
+
+    context 'with new event proceeding along the sequence' do
+      let(:exchange) { instance_double(MessageBroker::Exchange, 'Exchange') }
+
+      before do
+        allow(MessageBroker::Exchange).to receive(:new).and_return(exchange)
+        allow(dispatcher).to receive(:each_socket_activity).and_yield(event_socket)
+        allow(new_message).to receive(:sequence).and_return(1)
+        allow(exchange).to receive(:convey).with(new_message)
+      end
+
+      it 'sends it out right away' do
+        expect(exchange).to receive(:convey).with(new_message)
+        dispatcher.run
+      end
+    end
+
+    context 'with new event out of sequence' do
+      let(:exchange) { instance_double(MessageBroker::Exchange, 'Exchange') }
+
+      before do
+        allow(MessageBroker::Exchange).to receive(:new).and_return(exchange)
+        allow(dispatcher).to receive(:each_socket_activity).and_yield(event_socket)
+        allow(new_message).to receive(:sequence).and_return(2)
+      end
+
+      it 'put new event on hold' do
+        expect(exchange).not_to receive(:convey).with(new_message)
         dispatcher.run
       end
     end
