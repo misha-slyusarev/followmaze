@@ -91,11 +91,24 @@ describe MessageBroker::Exchange do
         exchange.convey(private_message)
       end
     end
-    #
-    # context 'getting Status message' do
-    #   before { exchange.convey(status_message) }
-    #   it 'delivers it properly' do
-    #   end
-    # end
+
+    context 'getting Status message' do
+      let(:status_message) { instance_double('MessageBroker::Message', 'Status message') }
+      let(:followers) { MessageBroker::SortedArray.new([to_id])}
+
+      before do
+        allow(status_message).to receive(:type).and_return(MessageBroker::Message::Type::STATUS)
+        allow(status_message).to receive(:raw).and_return(status_raw_message)
+        allow(status_message).to receive(:from).and_return(to_id)
+
+        allow(message_queue).to receive(:push).with(status_raw_message)
+        allow(message_queue).to receive(:followers).with(no_args).and_return(followers)
+      end
+
+      it 'delivers it properly' do
+        expect(message_queue).to receive(:push).with(status_raw_message)
+        exchange.convey(status_message)
+      end
+    end
   end
 end
