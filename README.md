@@ -10,7 +10,7 @@ Fig 1
         |  |                               |      +-> MESSAGE QUEUE 1 +--> CLIENT 1
         |  |   THREAD MANAGEMENT   +-------+----+ | +-----------------+ |
         |  |   NETWORK MANAGEMENT  |            | |                     |
-EVENTS +-----> MESSAGE PARSER      |  EXCHANGE  +-+         ...         |
+EVENTS +-----> MESSAGE PARSER      |  EXCHANGE  +-+         ...         |    ...
         |  |   SEQUENCE HANDLER    |            | |                     |
         |  |                       +-------+----+ | +-----------------+ |
         |  |                               |      +-> MESSAGE QUEUE N +--> CLIENT N
@@ -30,15 +30,15 @@ When there is a new message it needs to be parsed, and checked to meet the seque
 
 ### Exchange
 
-Exchange examines message type, from, and to fields, and decides whom this message addressed to. It then pass the message down to appropriate queue.
+Exchange examines message *type*, *from*, and *to* fields, and decides whom this message addressed to. It then passes the message down to appropriate queue.
 
 ### Message queue
 
-Each client connection handles by a Message Queue. It's a simple process that waits messages from queue and pass them over to client's socket.
+Each client connection handles by a Message Queue. It's a simple process that awaits messages from a queue and submits them to the client's socket. It also knows who was subscribed to the queue by managing a list of followers.
 
 #### Virtual message queue
 
-Some of the incoming events ask to subscribe a client to nonexistent subscription (nonexistent client). In this case we can spin up a virtual queue to keep common logic of the program untouched. Virtual queue is a dummy message queue that keeps list of followers and doesn't connect to any client.
+Some of the incoming events ask to subscribe a client to empty subscription (absent client). In this case we can spin up a virtual queue to keep common logic of the program untouched. Virtual queue is a dummy message queue that keeps list of followers and doesn't interact with a client.
 
 ## Usage
 
@@ -51,18 +51,11 @@ or say which ports you want to use:
 ./bin/message_broker 9090 9099
 ```
 
-You can also run `bin/console` for an interactive prompt that will allow you to experiment. When in console you can instantiate an Exchange:
+You can also run `bin/console` for an interactive prompt that will allow you to experiment. When in console you can start the server:
 ```
-  e = MessageBroker::Exchange.new
+MessageBroker.start(event_port: 9090, client_port: 9099)
 ```
-or start the server:
+or instantiate an Exchange and play around:
 ```
-  MessageBroker.start(event_port: 9090, client_port: 9099)
+e = MessageBroker::Exchange.new  
 ```
-and play around.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
