@@ -10,7 +10,7 @@ require 'socket'
 
 module MessageBroker
   def self.start(event_port: 9090, client_port: 9099)
-    dispatcher = Dispatcher.new event_port, client_port
+    dispatcher = Dispatcher.new(event_port, client_port)
     dispatcher.run
   end
 end

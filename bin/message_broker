@@ -13,6 +13,8 @@ ARGV.clear
 if args.empty?
   MessageBroker.start
 else
-  event_port = args.shift.strip
-  MessageBroker.start event_port
+  event_port = args.shift
+  client_port = args.shift || '9099'
+
+  MessageBroker.start(event_port: event_port.strip, client_port: client_port.strip)
 end
