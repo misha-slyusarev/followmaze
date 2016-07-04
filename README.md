@@ -24,17 +24,17 @@ EVENTS +-----> MESSAGE PARSER      |  EXCHANGE  +-+         ...         |    ...
 
 ### Dispatcher
 
-Dispatcher manages income connections as well as income messages. When new client arrives it creates new message queue and runs it in a separate thread. That way all the message queues are separated and can be processed in parallel.
+Dispatcher manages income connections as well as income messages. When new client arrives it creates new message queue and runs it in a separate thread. That way all the message queues are distinct and can be processed in parallel.
 
-When there is a new message it needs to be parsed, and checked to meet the sequence. If there is a gap between message's sequence number and last handled sequence, the message will be put on hold to process later in line order.
+When there is a new message it needs to be parsed, and checked to meet the sequence. If there is a gap between message's sequence number and last handled sequence, the message will be put on hold to be processed later in line order.
 
 ### Exchange
 
-Exchange examines message *type*, *from*, and *to* fields, and decides whom this message addressed to. It then passes the message down to appropriate queue.
+Exchange examines message *type*, *from*, and *to* fields, and decides whom this message addressed to. It then passes the message down to appropriate message queue.
 
 ### Message queue
 
-Each client connection handles by a Message Queue. It's a simple process that awaits messages from a queue and submits them to the client's socket. It also knows who was subscribed to the queue by managing a list of followers.
+Each client connection handles by a Message Queue. It's a simple process that awaits messages from the exchange and submits them to the client's socket. It also knows who was subscribed to the queue by managing a list of followers.
 
 #### Virtual message queue
 
