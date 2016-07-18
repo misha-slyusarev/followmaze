@@ -17,7 +17,7 @@ module MessageBroker
     end
 
     def delete_first
-      delete_at(0)
+      shift
     end
 
     private
