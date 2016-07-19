@@ -9,7 +9,8 @@ module MessageBroker
     attr_accessor :message_queues
 
     def initialize
-      @message_queues = SortedArray.new { |x, y| x.id <=> y.id }
+      #@message_queues = SortedArray.new { |x, y| x.id <=> y.id }
+      @message_queues = HashTable.new(:id)
     end
 
     def convey(message)
@@ -77,7 +78,8 @@ module MessageBroker
     end
 
     def look_through_queues(id)
-      @message_queues.bsearch { |q| id - q.id }
+      #@message_queues.bsearch { |q| id - q.id }
+      @message_queues[id]
     end
   end
 
