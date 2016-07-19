@@ -43,6 +43,7 @@ describe MessageBroker::Dispatcher do
         allow(dispatcher).to receive(:each_socket_activity).and_yield(client_socket)
         allow(MessageBroker::MessageQueue).to receive(:new).with(client_socket).and_return(new_message_queue)
         allow(new_message_queue).to receive(:run)
+        allow(new_message_queue).to receive(:id)
         allow(Thread).to receive(:new).and_yield
       end
 

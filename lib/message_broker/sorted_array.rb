@@ -12,10 +12,10 @@ module MessageBroker
       sort!(&sort_by)
     end
 
-    def <<(v)
-      #insert(0, v)
+    def <<(entity)
+      #insert(0, entity)
 
-      self.push(v)
+      self.push(entity)
       return if self.length == 1
 
       i = self.length-1
@@ -31,8 +31,8 @@ module MessageBroker
 
     private
 
-    # def insert(_i, v)
-    #   insert_before = bsearch_index { |x| @sort_by.call(x, v) >= 0 }
+    # def insert(_i, entity)
+    #   insert_before = bsearch_index { |x| @sort_by.call(x, entity) >= 0 }
     #   super(insert_before ? insert_before : -1, v)
     # end
 
