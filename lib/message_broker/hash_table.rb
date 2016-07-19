@@ -11,15 +11,19 @@ module MessageBroker
     end
 
     def <<(entry)
-      index = bin_for(get_key(entry))
+      index = get_index(entry.send(@key_method))
       @bins[index] ||= []
       @bins[index] << entry
     end
 
     def [](key)
-      index = bin_for(key)
-      return unless @bins[index]
-      @bins[index].detect { |e| get_key(e) == key }
+      index = get_index(key)
+      @bins[index] and @bins[index].detect { |e| e.send(@key_method) == key }
+    end
+
+    def delete(key)
+      index = get_index(key)
+      @bins[index] and @bins[index].delete_if { |e| e.send(@key_method) == key }
     end
 
     def each(&block)
@@ -28,12 +32,8 @@ module MessageBroker
 
     private
 
-    def bin_for(key)
+    def get_index(key)
       key.hash % @bins_count
-    end
-
-    def get_key(entry)
-      @key_method ? entry.send(@key_method) : entry
     end
   end
 end
