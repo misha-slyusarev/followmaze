@@ -61,6 +61,7 @@ module MessageBroker
         end
       end
     rescue Interrupt
+      @messages_to_handle.each { |m| @exchange.convey(m) }
       @exchange.message_queues.each(&:shutdown)
       @tread_pool.each(&:join)
       puts 'Done'
