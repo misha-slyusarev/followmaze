@@ -13,6 +13,7 @@ module MessageBroker
 
       @messages_to_handle = SortedArray.new { |x, y| x.sequence <=> y.sequence }
       @exchange = Exchange.new
+      @tread_pool = Array.new
       @last_sequence = 0
     end
 
@@ -24,7 +25,7 @@ module MessageBroker
         else
           mq = MessageQueue.new(socket)
           @exchange.message_queues << mq
-          Thread.new { mq.run }
+          @tread_pool << Thread.new { mq.run }
         end
       end
     end
@@ -60,6 +61,8 @@ module MessageBroker
         end
       end
     rescue Interrupt
+      @exchange.message_queues.each(&:shutdown)
+      @tread_pool.each(&:join)
       puts 'Done'
     rescue => er
       puts "Error: #{er}"

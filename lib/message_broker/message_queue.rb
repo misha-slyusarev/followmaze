@@ -24,6 +24,7 @@ module MessageBroker
     def run
       loop do
         line = @queue.pop
+        break if :exit == line
         @socket.puts(line)
       end
     ensure
@@ -32,6 +33,10 @@ module MessageBroker
 
     def push(line)
       @queue.push(line)
+    end
+
+    def shutdown
+      @queue.push(:exit)
     end
   end
 
@@ -44,7 +49,12 @@ module MessageBroker
       @followers = SortedArray.new
     end
 
-    def push(line)
+    ["push", "shutdown"].each do |method_name|
+      module_eval %{
+        def #{method_name}(*args)
+        end
+      }
     end
   end
+
 end
