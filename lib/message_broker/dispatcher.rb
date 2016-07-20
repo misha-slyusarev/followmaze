@@ -23,7 +23,7 @@ module MessageBroker
           handle(Message.new(line))
         else
           mq = MessageQueue.new(socket)
-          @exchange.message_queues << mq
+          @exchange.message_queues[mq.id] = mq
           Thread.new { mq.run }
         end
       end
@@ -61,8 +61,8 @@ module MessageBroker
       end
     rescue Interrupt
       puts 'Done'
-    rescue => er
-      puts "Error: #{er}"
+    # rescue => er
+    #   puts "Error: #{er}"
     ensure
       @descriptors.each(&:close)
     end

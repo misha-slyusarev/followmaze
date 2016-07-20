@@ -18,7 +18,7 @@ module MessageBroker
       @queue = Queue.new
       @socket = client_socket.accept.set_encoding('UTF-8')
       @id = @socket.gets.to_i
-      @followers = SortedArray.new
+      @followers = Hash.new #SortedArray.new
     end
 
     def run
@@ -41,7 +41,7 @@ module MessageBroker
 
     def initialize(id)
       @id = id
-      @followers = SortedArray.new
+      @followers = Hash.new #SortedArray.new
     end
 
     def push(line)

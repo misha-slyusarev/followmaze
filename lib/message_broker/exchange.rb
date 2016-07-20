@@ -9,7 +9,7 @@ module MessageBroker
     attr_accessor :message_queues
 
     def initialize
-      @message_queues = SortedArray.new { |x, y| x.id <=> y.id }
+      @message_queues = Hash.new #SortedArray.new { |x, y| x.id <=> y.id }
     end
 
     def convey(message)
@@ -28,8 +28,8 @@ module MessageBroker
 
       if look_through_queues(@current_message.from)
         vmq = VirtualMessageQueue.new(message.to)
-        vmq.followers << @current_message.from
-        @message_queues << vmq
+        vmq.followers[@current_message.from] = true
+        @message_queues[vmq.id] = vmq
       else
         to_mq = look_through_queues(@current_message.to)
         to_mq.push(message.raw) unless to_mq.nil?
@@ -41,7 +41,7 @@ module MessageBroker
     def subscribe
       to_mq = find_message_queue(@current_message.to)
       from_mq = find_message_queue(@current_message.from)
-      to_mq.followers << from_mq.id
+      to_mq.followers[from_mq.id] = true
       to_mq.push(@current_message.raw)
     end
 
@@ -49,12 +49,12 @@ module MessageBroker
       mq = find_message_queue(@current_message.to)
       mq.followers.delete(@current_message.from)
       if !mq.followers && mq.class == VirtualMessageQueue
-        @message_queues.delete(mq)
+        @message_queues.delete(mq.id)
       end
     end
 
     def broadcast
-      @message_queues.each { |mq| mq.push(@current_message.raw) }
+      @message_queues.each_value { |mq| mq.push(@current_message.raw) }
     end
 
     def send_private
@@ -63,7 +63,7 @@ module MessageBroker
 
     def send_status
       mq = find_message_queue(@current_message.from)
-      mq.followers.each { |id| send_message(id, @current_message.raw) }
+      mq.followers.each_key { |id| send_message(id, @current_message.raw) }
     end
 
     def send_message(id, body)
@@ -77,7 +77,8 @@ module MessageBroker
     end
 
     def look_through_queues(id)
-      @message_queues.bsearch { |q| id - q.id }
+      #@message_queues.bsearch { |q| id - q.id }
+      @message_queues[id]
     end
   end
 
